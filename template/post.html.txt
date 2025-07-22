@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post Created</title>
+</head>
+<body>
+    <h1>Post Submitted Successfully!</h1>
+    <a href="/">Go back</a>
+</body>
+</html>

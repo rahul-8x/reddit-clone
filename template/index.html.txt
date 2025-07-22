@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reddit Clone</title>
+</head>
+<body>
+    <h1>Welcome to Reddit Clone</h1>
+    <form action="/post" method="POST">
+        <input type="text" name="title" placeholder="Post title" required><br>
+        <textarea name="content" placeholder="Post content" required></textarea><br>
+        <button type="submit">Create Post</button>
+    </form>
+    <hr>
+    {% for post in posts %}
+        <div>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+        </div>
+    {% endfor %}
+</body>
+</html>
