@@ -1,45 +1,32 @@
 pipeline {
-    agent { label 'Agent-Vinod' }  // 👈 Use your actual agent label
+    agent { label 'Agent-Vinod' }
 
     environment {
-        IMAGE_NAME = 'your-dockerhub-username/reddit-clone'
-        CREDENTIAL_ID = 'dockerhub-creds-id' // 👈 your Jenkins DockerHub credentials ID
+        IMAGE_NAME = 'rahul8x/reddit-clone'
     }
 
     stages {
-        stage('Clone Repo') {
-            steps {
-                git url: 'https://github.com/your-username/reddit-clone.git', branch: 'main'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${IMAGE_NAME}")
+                    bat "docker build -t %IMAGE_NAME% ."
+                }
+            }
+        }
+
+        stage('DockerHub Login') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
                 }
             }
         }
 
         stage('Push to DockerHub') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: "${CREDENTIAL_ID}",
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    script {
-                        docker.withRegistry('https://index.docker.io/v1/', "${CREDENTIAL_ID}") {
-                            dockerImage.push('latest')
-                        }
-                    }
+                script {
+                    bat "docker push %IMAGE_NAME%"
                 }
-            }
-        }
-
-        stage('Clean Up') {
-            steps {
-                sh "docker rmi ${IMAGE_NAME}:latest || true"
             }
         }
     }
